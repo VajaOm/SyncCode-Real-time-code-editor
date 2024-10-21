@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const generateAccessToken = async ({username, email, _id}) => {
+const generateAccessToken = async (username, email, _id) => {
+    console.log(username, email, _id);
     const accessToken = await jwt.sign({
         data: {
             'Issuer': username,
@@ -16,7 +17,7 @@ const generateAccessToken = async ({username, email, _id}) => {
     return accessToken;
 }
 
-const generateRefreshToken = async ({username, _id}) => {
+const generateRefreshToken = async (username, _id) => {
     const refreshToken = await jwt.sign(
         {
             'Issuer': username,

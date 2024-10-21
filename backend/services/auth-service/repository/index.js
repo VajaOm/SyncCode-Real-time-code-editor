@@ -2,11 +2,10 @@ import { UserRepository } from "./user.repository.js";
 
 const userRepo = new UserRepository();
 
-const register = userRepo.register;
-const login = userRepo.login;
+const createUser = userRepo.createUser;
+const findByUsername = userRepo.findByUsername;
 
 export {
-    register,
-    login
+    createUser,
+    findByUsername
 };
-

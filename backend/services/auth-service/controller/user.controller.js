@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
-import { register, login } from "../repository/index.js";
+import { register, login } from "../service/index.js";
 
 export class UserController {
 
@@ -37,8 +37,10 @@ export class UserController {
             httpOnly: true,
             secure: true,
             path: "/",
-            sameSite: 'Strict'
+            sameSite: 'None'
         };
+
+        console.log("accessToken : ", accessToken);
 
         res.status(200)
             .cookie("accessToken", accessToken, options)
