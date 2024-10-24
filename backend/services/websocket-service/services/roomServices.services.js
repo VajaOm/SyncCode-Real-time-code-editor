@@ -1,6 +1,7 @@
 import { RoomRepository } from "../repository/roomRepository.js";
 import mongoose from "mongoose";
 import { getConnectedUsers } from "./websocket.service.js";
+import { RabbitMqService } from '../services/rabbitMqService.js';
 
 export class RoomService {
     constructor() {
@@ -147,19 +148,24 @@ export class RoomService {
 
     async insertCodeIntoDb(ws, redisClient, parsedData) {
         try {
-            
+            const rabbitmqService = new RabbitMqService();
+            await rabbitmqService.connect();
+
             const roomId = await redisClient.get(`room:${parsedData.roomName}`);
 
-            if(!roomId) {
-                ws.send(JSON.stringify({error: "Room name not found"}));
+            if (!roomId) {
+                ws.send(JSON.stringify({ error: "Room name not found" }));
                 return;
             }
 
-            await this.roomrepository.addCode(roomId, parsedData.code);
-            
+            // await this.roomrepository.addCode(roomId, parsedData.code);
+            await rabbitmqService.uploadDataOntoQueue({ roomId: roomId, code: parsedData.code, userId: parsedData.userId, type: 'Save-code' });
+            console.log("Uploaded data onto the queue");
+
+            await rabbitmqService.closeConnection();
 
         } catch (error) {
-            ws.send(JSON.stringify({error: error.message}));
+            ws.send(JSON.stringify({ error: error.message }));
             return;
         }
     }
